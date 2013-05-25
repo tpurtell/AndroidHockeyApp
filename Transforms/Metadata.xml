@@ -1,0 +1,12 @@
+<metadata>
+  <attr path="//parameter[@type='void']" name="type">java.lang.Void</attr>
+  <!--
+  This sample removes the class: android.support.v4.content.AsyncTaskLoader.LoadTask:
+  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='AsyncTaskLoader.LoadTask']" />
+  
+  This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
+  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
+  -->
+  <attr path="/api/package[@name='net.hockeyapp.android']/class[@name='UpdateActivity']/method[@name='getLayoutView']" name="managedReturn">Android.Views.View</attr>
+  <remove-node path="/api/package[@name='net.hockeyapp.android.internal']" />
+</metadata>
