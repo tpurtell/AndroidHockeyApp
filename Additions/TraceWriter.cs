@@ -28,7 +28,7 @@ namespace Net.Hockeyapp.Android
                     sw.WriteLine("Manufacturer: {0}", Constants.PhoneManufacturer);
                     sw.WriteLine("Model: {0}", Constants.PhoneModel);
                     sw.WriteLine("Date: {0}", date);
-                    sw.WriteLine("\n");
+                    sw.WriteLine();
                     sw.WriteLine(exception);
                 }
             }
