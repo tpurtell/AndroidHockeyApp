@@ -1,3 +1,4 @@
+// public domain ... derived from https://github.com/bitstadium/HockeySDK-Android/blob/db7fff12beecea715f2894cb69ba358ea324ad17/src/main/java/net/hockeyapp/android/internal/ExceptionHandler.java
 using System;
 using System.IO;
 using Java.Lang;
