@@ -1,3 +1,56 @@
 This is a binding of HockeyApp for Android for use with Xamarin.Android.
 
-It includes an additional class, TraceWriter, which allows you to log exceptions that come from .NET into HockeyApp.
+It includes an additional class, TraceWriter, which allows you to log exceptions that come from .NET into HockeyApp.  Exceptions are reported to HockeyApp and are properly grouped.  You will see both java and c# based exceptions.
+
+I use it as follows, if you have other suggestions, I would love to hear (tpurtell@gmail.com).
+
+The tricky thing is that you have to integrate it into how you work with Tasks, since the .NET uncaught task exception only reports when a Task has an exception and is finalized.  I never saw this happen, so I suspect some part of the framework is holding onto a reference.
+
+I have an auxiliary class that is a utility for catching exceptions on Tasks.
+
+	public static class ExceptionSupport
+	{
+		public static void LogAndIgnore(Task task)
+		{
+			Console.WriteLine("Task failed: {0}", task.Exception);
+		}
+		public static void ReportAndExit(Task task)
+		{
+			Console.WriteLine("Task failed: {0}", task.Exception);
+            UncaughtTaskExceptionHandler(task.Exception);
+            Process.GetCurrentProcess().Kill();
+		}
+		public static Action<object> UncaughtTaskExceptionHandler;
+		public static Task HandleExceptions(this Task task)
+		{
+			return task.HandleExceptions(ReportAndExit);
+		}
+		public static Task HandleExceptions(this Task task, Action<Task> handler)
+		{
+			return task.ContinueWith(handler,
+								TaskContinuationOptions.OnlyOnFaulted |
+								TaskContinuationOptions.ExecuteSynchronously);
+		}
+	}
+	
+Now when I do Task.Factory.StartNew(Foo), I make sure to follow it with .HandleExceptions().  Or if I don't care about the task's result, then .HandleExceptions(ExceptionSupport.LogAndIgnore).
+
+Then I have a some code in my BaseActivity class which provides general instrumentation across my app.  Here we want to ensure that the crash handler is **always** registered even if the app crashes and Android starts up just the current activity again (not some root launcher activity that your home screen icon invokes).
+
+	public abstract class BaseActivity : WhateverActivityBaseYouLike
+	{
+	    private static bool _CrashHandlerRegistered = false;
+		protected override void OnResume ()
+		{
+			base.OnResume ();
+		    if (!_CrashHandlerRegistered)
+		    {
+		        _CrashHandlerRegistered = true;
+		        CrashManager.Register(this, PlatformUtils.HockeyApplicationId);
+		        AppDomain.CurrentDomain.UnhandledException +=
+		            (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
+		        TaskScheduler.UnobservedTaskException += (sender, args) => TraceWriter.WriteTrace(args.Exception);
+		        ExceptionSupport.UncaughtTaskExceptionHandler = TraceWriter.WriteTrace;
+		    }
+	...
+		
