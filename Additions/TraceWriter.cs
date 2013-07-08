@@ -30,7 +30,19 @@ namespace Net.Hockeyapp.Android
                     sw.WriteLine("Model: {0}", Constants.PhoneModel);
                     sw.WriteLine("Date: {0}", date);
                     sw.WriteLine();
-                    sw.WriteLine(exception);
+                    try
+                    {
+                        sw.WriteLine(exception);
+                    }
+                    catch (Exception e)
+                    {
+                        // checking for https://bugzilla.xamarin.com/show_bug.cgi?id=10379
+                        // null reference exceptions with no stack trace from inside unhandled exception handler
+                        // may not be a problem, investigating.
+                        sw.WriteLine();
+                        sw.WriteLine("Exception writing exception: {0}", e);
+                        throw e;
+                    }
                 }
             }
             catch (Exception another)
