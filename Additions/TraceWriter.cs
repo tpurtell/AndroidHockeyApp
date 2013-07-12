@@ -13,6 +13,7 @@ namespace Net.Hockeyapp.Android
         private static string _AndroidVersion = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
         private static string _PhoneManufacturer = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
         private static string _PhoneModel = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private static string _FilesPath = ".";
 
         public static void InitializeConstants()
         {
@@ -21,6 +22,7 @@ namespace Net.Hockeyapp.Android
             _AndroidVersion = Constants.AndroidVersion;
             _PhoneManufacturer = Constants.PhoneManufacturer;
             _PhoneModel = Constants.PhoneModel;
+            _FilesPath = Constants.FilesPath;
         }
         public static void WriteTrace(object exception)
         {
@@ -29,7 +31,7 @@ namespace Net.Hockeyapp.Android
             var bytes = new byte[16];
             new Random().NextBytes(bytes);
             string filename = new SoapHexBinary(bytes).ToString();
-            string path = Path.Combine(Constants.FilesPath, filename + ".stacktrace");
+            string path = Path.Combine(_FilesPath, filename + ".stacktrace");
             Console.WriteLine("Writing unhandled exception to: {0}", path);
             try
             {
