@@ -8,6 +8,12 @@ namespace Net.Hockeyapp.Android
 {
     public static class TraceWriter
     {
+        private static string AppPackage = Constants.AppPackage;
+        private static string AppVersion = Constants.AppVersion;
+        private static string AndroidVersion = Constants.AndroidVersion;
+        private static string PhoneManufacturer = Constants.PhoneManufacturer;
+        private static string PhoneModel = Constants.PhoneModel;
+
         public static void WriteTrace(object exception)
         {
             DateTime date = DateTime.UtcNow;
@@ -23,11 +29,11 @@ namespace Net.Hockeyapp.Android
                 using (var sw = new StreamWriter(f))
                 {
                     // Write the stacktrace to disk
-                    sw.WriteLine("Package: {0}", Constants.AppPackage);
-                    sw.WriteLine("Version: {0}", Constants.AppVersion);
-                    sw.WriteLine("Android: {0}", Constants.AndroidVersion);
-                    sw.WriteLine("Manufacturer: {0}", Constants.PhoneManufacturer);
-                    sw.WriteLine("Model: {0}", Constants.PhoneModel);
+                    sw.WriteLine("Package: {0}", AppPackage);
+                    sw.WriteLine("Version: {0}", AppVersion);
+                    sw.WriteLine("Android: {0}", AndroidVersion);
+                    sw.WriteLine("Manufacturer: {0}", PhoneManufacturer);
+                    sw.WriteLine("Model: {0}", PhoneModel);
                     sw.WriteLine("Date: {0}", date);
                     sw.WriteLine();
                     try
