@@ -8,12 +8,20 @@ namespace Net.Hockeyapp.Android
 {
     public static class TraceWriter
     {
-        private static string AppPackage = Constants.AppPackage;
-        private static string AppVersion = Constants.AppVersion;
-        private static string AndroidVersion = Constants.AndroidVersion;
-        private static string PhoneManufacturer = Constants.PhoneManufacturer;
-        private static string PhoneModel = Constants.PhoneModel;
+        private static string _AppPackage = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private static string _AppVersion = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private static string _AndroidVersion = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private static string _PhoneManufacturer = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private static string _PhoneModel = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
 
+        public static void InitializeConstants()
+        {
+            _AppPackage = Constants.AppPackage;
+            _AppVersion = Constants.AppVersion;
+            _AndroidVersion = Constants.AndroidVersion;
+            _PhoneManufacturer = Constants.PhoneManufacturer;
+            _PhoneModel = Constants.PhoneModel;
+        }
         public static void WriteTrace(object exception)
         {
             DateTime date = DateTime.UtcNow;
@@ -29,11 +37,11 @@ namespace Net.Hockeyapp.Android
                 using (var sw = new StreamWriter(f))
                 {
                     // Write the stacktrace to disk
-                    sw.WriteLine("Package: {0}", AppPackage);
-                    sw.WriteLine("Version: {0}", AppVersion);
-                    sw.WriteLine("Android: {0}", AndroidVersion);
-                    sw.WriteLine("Manufacturer: {0}", PhoneManufacturer);
-                    sw.WriteLine("Model: {0}", PhoneModel);
+                    sw.WriteLine("Package: {0}", _AppPackage);
+                    sw.WriteLine("Version: {0}", _AppVersion);
+                    sw.WriteLine("Android: {0}", _AndroidVersion);
+                    sw.WriteLine("Manufacturer: {0}", _PhoneManufacturer);
+                    sw.WriteLine("Model: {0}", _PhoneModel);
                     sw.WriteLine("Date: {0}", date);
                     sw.WriteLine();
                     try
