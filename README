@@ -47,6 +47,8 @@ Then I have a some code in my BaseActivity class which provides general instrume
             {
                 _CrashHandlerRegistered = true;
                 CrashManager.Register(this, PlatformUtils.HockeyApplicationId);
+                //copy build properties into c# land so that the handler won't crash accessing java
+                TraceWriter.InitializeConstants();
                 AppDomain.CurrentDomain.UnhandledException +=
                     (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
                 TaskScheduler.UnobservedTaskException += (sender, args) => TraceWriter.WriteTrace(args.Exception);
