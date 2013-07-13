@@ -26,7 +26,7 @@ namespace Net.Hockeyapp.Android
         }
         public static void WriteTrace(object exception)
         {
-            DateTime date = DateTime.UtcNow;
+            DateTime date = DateTime.Now;
             // Create filename from a random uuid
             var bytes = new byte[16];
             new Random().NextBytes(bytes);
