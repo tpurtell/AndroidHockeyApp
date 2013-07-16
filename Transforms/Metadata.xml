@@ -8,5 +8,7 @@
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
   <attr path="/api/package[@name='net.hockeyapp.android']/class[@name='UpdateActivity']/method[@name='getLayoutView']" name="managedReturn">Android.Views.View</attr>
+  <attr path="/api/package[@name='net.hockeyapp.android']/class[@name='FeedbackActivity']/method[@name='getLayoutView']" name="managedReturn">Android.Views.View</attr>
   <remove-node path="/api/package[@name='net.hockeyapp.android.internal']" />
+  <remove-node path="/api/package[@name='net.hockeyapp.android.tasks']" />
 </metadata>
