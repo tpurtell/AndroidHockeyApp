@@ -49,7 +49,9 @@
       <SubType>Designer</SubType>
     </TransformFile>
     <TransformFile Include="Transforms\EnumFields.xml" />
-    <TransformFile Include="Transforms\EnumMethods.xml" />
+    <TransformFile Include="Transforms\EnumMethods.xml">
+      <SubType>Designer</SubType>
+    </TransformFile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedJar Include="Jars\HockeySDK.jar" />

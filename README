@@ -49,6 +49,13 @@ Then I have a some code in my BaseActivity class which provides general instrume
                 CrashManager.Register(this, PlatformUtils.HockeyApplicationId);
                 //copy build properties into c# land so that the handler won't crash accessing java
                 TraceWriter.InitializeConstants();
+				//TraceWriter.Initialize(listener); // instead of InitializeConstants: if you want things like user/contact/description
+
+                AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) => 
+					{
+						TraceWriter.WriteTrace(args.Exception);
+						args.Handled = true;
+					};
                 AppDomain.CurrentDomain.UnhandledException +=
                     (sender, args) => TraceWriter.WriteTrace(args.ExceptionObject);
                 TaskScheduler.UnobservedTaskException += (sender, args) => TraceWriter.WriteTrace(args.Exception);
