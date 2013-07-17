@@ -189,5 +189,29 @@ namespace Net.Hockeyapp.Android
             WriteTrace(exception, false);
         }
 
+        public static string Logcat(string appTag)
+        {
+            string description = "";
+
+            try
+            {
+                var p = new Process();
+                // Redirect the output stream of the child process.
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.FileName = "logcat";
+                p.StartInfo.Arguments = "-d ActivityManager:I " + appTag + ":D *:S";
+                p.Start();
+                description = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Couldnt get logcat: {0}", e);
+            }
+
+            return description;
+        }
+
     }
 }
