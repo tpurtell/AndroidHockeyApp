@@ -1,4 +1,4 @@
-This is a binding of HockeyApp for Android for use with Xamarin.Android.
+This is a binding of HockeyApp for Android (SDK version 3.0.0) for use with Xamarin.Android.
 
 It includes an additional class, TraceWriter, which allows you to log exceptions that come from .NET into HockeyApp.  Exceptions are reported to HockeyApp and are properly grouped.  You will see both java and c# based exceptions.
 
