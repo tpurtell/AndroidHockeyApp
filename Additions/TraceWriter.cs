@@ -11,16 +11,19 @@ namespace Net.Hockeyapp.Android
     {
         private static CrashManagerListener _Listener;
 
-        private static string _AppPackage = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
-        private static string _AppVersion = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
-        private static string _AndroidVersion = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
-        private static string _PhoneManufacturer = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
-        private static string _PhoneModel = "Unknown: call TraceWriter.InitializeConstants after CrashManager.Initialize";
+        private const string UNKNOWN_STATIC = "Unknown: call TraceWriter.InitializeConstants or TraceWriter.Initialize(listener) after CrashManager.Initialize";
+        private static string _AppPackage = UNKNOWN_STATIC;
+        private static string _AppVersion = UNKNOWN_STATIC;
+        private static string _AndroidVersion = UNKNOWN_STATIC;
+        private static string _PhoneManufacturer = UNKNOWN_STATIC;
+        private static string _PhoneModel = UNKNOWN_STATIC;
         private static string _FilesPath = ".";
         private static bool _IncludeDeviceData = true;
-        private static string _User = "Unknown: call TraceWriter.Initialize(listener) after CrashManager.Initialize";
-        private static string _Contact = "Unknown: call TraceWriter.Initialize(listener) after CrashManager.Initialize";
-        private static string _Description = "Unknown: call TraceWriter.Initialize(listener) after CrashManager.Initialize";
+        private const string UNKNOWN_DYNAMIC = "Unknown: call TraceWriter.Initialize(listener) after CrashManager.Initialize";
+        private static string _User = UNKNOWN_DYNAMIC;
+        private static string _Contact = UNKNOWN_DYNAMIC;
+        private static string _Description = UNKNOWN_DYNAMIC;
+        public static bool AllowCachedDescription = false;
 
         /// <summary>
         /// Copy build properties into c# land so that the handler won't crash accessing java.  When an unhandled exception occurs
@@ -56,9 +59,10 @@ namespace Net.Hockeyapp.Android
             if (listener != null)
             {
                 _IncludeDeviceData = _Listener.IncludeDeviceData();
-                _User = ClipString(listener.UserID);
+                _User = ClipString(listener.UserID) + "";
                 _Contact = ClipString(listener.Contact);
-                _Description = listener.Description;
+                if (AllowCachedDescription)
+                    _Description = listener.Description;
             }
         }
         public static void WriteTrace(object exception)
@@ -103,6 +107,8 @@ namespace Net.Hockeyapp.Android
                         }
                         sw.WriteLine("Date: {0}", date);
                         sw.WriteLine();
+                        //make sure there is something actually on disk
+                        sw.Flush();
                         try
                         {
                             sw.WriteLine(exception);
@@ -115,14 +121,51 @@ namespace Net.Hockeyapp.Android
                             sw.WriteLine("Exception writing exception: {0}", e);
                             throw new Exception("Problem writing exception", e);
                         }
+                        //make sure there is something actually on disk
+                        sw.Flush();
                         if (_Listener != null)
                         {
-                            File.WriteAllText(Path.Combine(_FilesPath, filename + ".user"), ClipString(_User),
-                                              Encoding.UTF8);
-                            File.WriteAllText(Path.Combine(_FilesPath, filename + ".contact"), ClipString(_Contact),
-                                              Encoding.UTF8);
-                            File.WriteAllText(Path.Combine(_FilesPath, filename + ".description"), _Description,
-                                              Encoding.UTF8);
+                            try
+                            {
+                                File.WriteAllText(Path.Combine(_FilesPath, filename + ".user"), ClipString(_Listener.UserID), Encoding.UTF8);
+                            }
+                            catch (Exception)
+                            {
+                                if (_User != null)
+                                {
+                                    sw.WriteLine();
+                                    sw.WriteLine("UserId was cached");
+                                    File.WriteAllText(Path.Combine(_FilesPath, filename + ".user"), ClipString(_User),
+                                                      Encoding.UTF8);
+                                }
+                            }
+                            try
+                            {
+                                File.WriteAllText(Path.Combine(_FilesPath, filename + ".contact"), ClipString(_Listener.Contact), Encoding.UTF8);
+                            }
+                            catch (Exception)
+                            {
+                                if (_Contact != null)
+                                {
+                                    sw.WriteLine();
+                                    sw.WriteLine("Contact was cached");
+
+                                    File.WriteAllText(Path.Combine(_FilesPath, filename + ".contact"), ClipString(_Contact), Encoding.UTF8);
+                                }
+                            }
+                            try
+                            {
+                                File.WriteAllText(Path.Combine(_FilesPath, filename + ".description"), _Listener.Description, Encoding.UTF8);
+                            }
+                            catch (Exception)
+                            {
+                                if (AllowCachedDescription &&_Description != null)
+                                {
+                                    sw.WriteLine();
+                                    sw.WriteLine("Description was cached");
+                                    File.WriteAllText(Path.Combine(_FilesPath, filename + ".description"), _Description, Encoding.UTF8);
+                                }
+                            }
                         }
                     }
                 }
