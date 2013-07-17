@@ -97,8 +97,8 @@ namespace Net.Hockeyapp.Android
         /// Writes the given exception to disc using the standard Exceptionhandler.
         /// </summary>
         /// <param name="exception">The exception to write.</param>
-        /// <remarks>All features from CrashManagerListener are used.</remarks>
-        public static void WriteTrace(Exception exception)
+        /// <remarks>All features from CrashManagerListener are used (including informations like UserId, Contact and Description).</remarks>
+        public static void WriteTraceAndInfo(Exception exception)
         {
             var throwable = Java.Lang.Throwable.FromException(exception);
             ExceptionHandler.SaveException(new Java.Lang.Throwable(throwable), _listener);
