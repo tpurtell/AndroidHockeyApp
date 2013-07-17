@@ -1,9 +1,11 @@
 // public domain ... derived from https://github.com/bitstadium/HockeySDK-Android/blob/db7fff12beecea715f2894cb69ba358ea324ad17/src/main/java/net/hockeyapp/android/internal/ExceptionHandler.java
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
+using Android.OS;
+using Environment = System.Environment;
+using Process = System.Diagnostics.Process;
 
 namespace Net.Hockeyapp.Android
 {
@@ -18,6 +20,7 @@ namespace Net.Hockeyapp.Android
         private static string _PhoneManufacturer = UNKNOWN_STATIC;
         private static string _PhoneModel = UNKNOWN_STATIC;
         private static string _FilesPath = ".";
+        private static readonly int _Version = (int)Build.VERSION.SdkInt;
         private static bool _IncludeDeviceData = true;
         private const string UNKNOWN_DYNAMIC = "Unknown: call TraceWriter.Initialize(listener) after CrashManager.Initialize";
         private static string _User = UNKNOWN_DYNAMIC;
@@ -200,7 +203,10 @@ namespace Net.Hockeyapp.Android
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.FileName = "logcat";
-                p.StartInfo.Arguments = "-d ActivityManager:I " + appTag + ":D *:S";
+                if (_Version >= 16)
+                    p.StartInfo.Arguments = "-d";
+                else
+                    p.StartInfo.Arguments = "-d ActivityManager:I " + appTag + ":D *:S";
                 p.Start();
                 description = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
