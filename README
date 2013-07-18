@@ -4,7 +4,7 @@ It includes an additional class, TraceWriter, which allows you to log exceptions
 
 I use it as follows, if you have other suggestions, I would love to hear (tpurtell@gmail.com).
 
-The tricky thing is that you have to integrate it into how you work with Tasks, since the .NET uncaught task exception only reports when a Task has an exception and is finalized.  I never saw this happen, so I suspect some part of the framework is holding onto a reference.
+The tricky thing is that you have to integrate it into how you work with Tasks, since the .NET uncaught task exception only reports when a Task has an exception and is finalized.  Thanks to adestis-ds, I learned that you can also intercept uncaught .NET exceptions running inside java code before they are converted to Java exceptions using AndroidEnvironment.UnhandledExceptionRaiser.
 
 I have an auxiliary class that is a utility for catching exceptions on Tasks.
 
