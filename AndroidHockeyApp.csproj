@@ -54,7 +54,7 @@
     </TransformFile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedJar Include="Jars\HockeySDK.jar" />
+    <EmbeddedJar Include="Jars\HockeySDK-3.0.1.jar" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.Bindings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
