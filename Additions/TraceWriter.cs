@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
+using System.Text.RegularExpressions;
 using Android.OS;
 using Environment = System.Environment;
 using Process = System.Diagnostics.Process;
@@ -72,6 +73,13 @@ namespace Net.Hockeyapp.Android
         {
             WriteTrace(exception, true);
         }
+        /*
+         from
+           at System.IO.Directory.CreateDirectoriesInternal (System.String path) [0x00000] in <filename unknown>:0 
+         to
+         \tat android.support.v4.app.FragmentManagerImpl.checkStateLoss(FragmentManager.java:1343)
+        */
+        static Regex _StackTraceLine = new Regex(@"\s*at\s*(\S+)\s*\(([^\)]*)\)");
 
         /// <summary>
         /// Writes the given object (usually an exception) to disc so that it can be picked up by the CrashManager and send to Hockeyapp.
@@ -114,7 +122,27 @@ namespace Net.Hockeyapp.Android
                         sw.Flush();
                         try
                         {
-                            sw.WriteLine(exception);
+                            if (!(exception is Exception))
+                            {
+                                sw.WriteLine(exception);
+                            }
+                            else
+                            {
+                                while ((exception as AggregateException) != null)
+                                    exception = (exception as AggregateException).InnerException;
+
+                                var e = (Exception)exception;
+                                sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
+                                var trace = e.StackTrace;
+                                foreach (Match m in _StackTraceLine.Matches(trace))
+                                {
+                                    var method = m.Groups[1].Value;
+                                    var arguments = m.Groups[2].Value.Trim();
+                                    arguments = arguments.Replace(' ', '_');
+                                    arguments = arguments.Replace(',', '_');
+                                    sw.WriteLine("\tat {0}({1}.args:1337)", method, arguments);
+                                }
+                            }
                         }
                         catch (Exception e)
                         {
