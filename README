@@ -2,6 +2,11 @@ This is a binding of HockeyApp for Android (SDK version 3.0.1) for use with Xama
 
 It includes an additional class, TraceWriter, which allows you to log exceptions that come from .NET into HockeyApp.  Exceptions are reported to HockeyApp and are properly grouped.  You will see both java and c# based exceptions.
 
+***** NOTE: HockeyApp is quite picky about the format that exceptions are reported in, so there is a significant transformation going on inside TraceWriter to make the exceptions group properly. ****
+- The arguments string is transformed so that it can look like a filename and line number string (not tested if this is strictly necessary, but done out of caution)
+- AggregateExceptions have only the most inner exception reported.  This means you should log the full exception and report it via the Description property of a custom CrashManagerListener along with any other log you might want to know about
+- Your package name is prepended to the method fullname for anything that does not start with java/mono/android.  You can customize it to match just some namespaces, with the TraceWriter.AppNamespaces static property.  Disable it by specifying a blank list if you have a traditional java namespace set up for your app
+
 I use it as follows, if you have other suggestions, I would love to hear (tpurtell@gmail.com).
 
 The tricky thing is that you have to integrate it into how you work with Tasks, since the .NET uncaught task exception only reports when a Task has an exception and is finalized.  Thanks to adestis-ds, I learned that you can also intercept uncaught .NET exceptions running inside java code before they are converted to Java exceptions using AndroidEnvironment.UnhandledExceptionRaiser.
