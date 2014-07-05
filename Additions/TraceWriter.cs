@@ -159,6 +159,7 @@ namespace Net.Hockeyapp.Android
                                         //package name at the beginning of your c# crash traces
                                         if (!method.StartsWith("mono", StringComparison.OrdinalIgnoreCase) &&
                                             !method.StartsWith("android", StringComparison.OrdinalIgnoreCase) &&
+                                            !method.StartsWith("system", StringComparison.OrdinalIgnoreCase) &&
                                             !method.StartsWith("java", StringComparison.OrdinalIgnoreCase))
                                         {
                                             method = _AppPackage + "." + method;
