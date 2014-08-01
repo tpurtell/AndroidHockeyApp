@@ -134,45 +134,48 @@ namespace Net.Hockeyapp.Android
 
                                 var e = (Exception)exception;
                                 sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
-                                var trace = e.StackTrace;
-                                foreach (Match m in _StackTraceLine.Matches(trace))
-                                {
-                                    var method = m.Groups[1].Value;
-                                    if (AppNamespaces != null)
-                                    {
-                                        //use an application provided list of classes to determine which namespaces
-                                        //should be mapped into the package name so hockey app can pick out the correct
-                                        //top stacktrace line.  It unfortunately means you end up with an extra copy of
-                                        //package name at the beginning of your c# crash traces
-                                        foreach (var prefix in AppNamespaces)
-                                        {
-                                            if (method.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                                            {
-                                                method = _AppPackage + "." + method;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        //default to things that don't match mono/android/java, again, this forces an extra copy of
-                                        //package name at the beginning of your c# crash traces
-                                        if (!method.StartsWith("mono", StringComparison.OrdinalIgnoreCase) &&
-                                            !method.StartsWith("android", StringComparison.OrdinalIgnoreCase) &&
-                                            !method.StartsWith("system", StringComparison.OrdinalIgnoreCase) &&
-                                            !method.StartsWith("java", StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            method = _AppPackage + "." + method;
-                                        }
-                                    }
-                                    //this forces the arguments part to look more like the file line number part that
-                                    //android stack traces normally have
-                                    var arguments = m.Groups[2].Value.Trim();
-                                    arguments = arguments.Replace(' ', '_');
-                                    arguments = arguments.Replace(',', '_');
+                                var trace = e.StackTrace
+								if (trace != null)
+								{
+									foreach (Match m in _StackTraceLine.Matches(trace))
+									{
+										var method = m.Groups[1].Value;
+										if (AppNamespaces != null)
+										{
+											//use an application provided list of classes to determine which namespaces
+											//should be mapped into the package name so hockey app can pick out the correct
+											//top stacktrace line.  It unfortunately means you end up with an extra copy of
+											//package name at the beginning of your c# crash traces
+											foreach (var prefix in AppNamespaces)
+											{
+												if (method.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+												{
+													method = _AppPackage + "." + method;
+													break;
+												}
+											}
+										}
+										else
+										{
+											//default to things that don't match mono/android/java, again, this forces an extra copy of
+											//package name at the beginning of your c# crash traces
+											if (!method.StartsWith("mono", StringComparison.OrdinalIgnoreCase) &&
+												!method.StartsWith("android", StringComparison.OrdinalIgnoreCase) &&
+												!method.StartsWith("system", StringComparison.OrdinalIgnoreCase) &&
+												!method.StartsWith("java", StringComparison.OrdinalIgnoreCase))
+											{
+												method = _AppPackage + "." + method;
+											}
+										}
+										//this forces the arguments part to look more like the file line number part that
+										//android stack traces normally have
+										var arguments = m.Groups[2].Value.Trim();
+										arguments = arguments.Replace(' ', '_');
+										arguments = arguments.Replace(',', '_');
 
-                                    sw.WriteLine("\tat {0}({1}.args:1337)", method, arguments);
-                                }
+										sw.WriteLine("\tat {0}({1}.args:1337)", method, arguments);
+									}
+								}
                             }
                         }
                         catch (Exception e)
