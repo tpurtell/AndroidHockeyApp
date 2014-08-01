@@ -134,7 +134,7 @@ namespace Net.Hockeyapp.Android
 
                                 var e = (Exception)exception;
                                 sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
-                                var trace = e.StackTrace
+                                var trace = e.StackTrace;
 								if (trace != null)
 								{
 									foreach (Match m in _StackTraceLine.Matches(trace))
