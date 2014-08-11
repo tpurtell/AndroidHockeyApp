@@ -133,11 +133,15 @@ namespace Net.Hockeyapp.Android
                                     exception = (exception as AggregateException).InnerException;
 
                                 var e = (Exception)exception;
-                                sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
                                 var trace = e.StackTrace;
-								if (trace != null)
-								{
-									foreach (Match m in _StackTraceLine.Matches(trace))
+                                if (trace == null)
+                                {
+                                    sw.WriteLine(e);
+                                }
+                                else
+                                {
+                                    sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
+                                    foreach (Match m in _StackTraceLine.Matches(trace))
 									{
 										var method = m.Groups[1].Value;
 										if (AppNamespaces != null)
