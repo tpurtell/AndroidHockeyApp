@@ -62,6 +62,6 @@
   </Target>
   -->
   <ItemGroup>
-    <EmbeddedJar Include="Jars\HockeySDK-3.0.2.jar" />
+    <EmbeddedJar Include="Jars\HockeySDK-3.5.0.jar" />
   </ItemGroup>
 </Project>
