@@ -80,7 +80,7 @@ namespace Net.Hockeyapp.Android
          to
          \tat android.support.v4.app.FragmentManagerImpl.checkStateLoss(FragmentManager.java:1343)
         */
-        static Regex _StackTraceLine = new Regex(@"\s*at\s*(\S+)\s*\(([^\)]*)\)");
+        static Lazy<Regex> _StackTraceLine = new Lazy<Regex>(() => new Regex(@"\s*at\s*(\S+)\s*\(([^\)]*)\)"));
 
         /// <summary>
         /// Writes the given object (usually an exception) to disc so that it can be picked up by the CrashManager and send to Hockeyapp.
@@ -141,7 +141,7 @@ namespace Net.Hockeyapp.Android
                                 else
                                 {
                                     sw.WriteLine("{0}: {1}", e.GetType().FullName, e.Message);
-                                    foreach (Match m in _StackTraceLine.Matches(trace))
+                                    foreach (Match m in _StackTraceLine.Value.Matches(trace))
 									{
 										var method = m.Groups[1].Value;
 										if (AppNamespaces != null)
